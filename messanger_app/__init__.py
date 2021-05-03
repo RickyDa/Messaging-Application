@@ -1,12 +1,12 @@
-import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 
-bcrypt = Bcrypt()
-db = SQLAlchemy()
-login_manager = LoginManager()
+# define flaks extensions
+bcrypt = Bcrypt()  # for encryption/ decryption
+db = SQLAlchemy()  # for handling database
+login_manager = LoginManager()  # for handling user sessions
 
 from .user.controllers import auth
 from .message.controllers import main
@@ -26,4 +26,10 @@ def create_app():
     app.register_blueprint(main)
     app.register_blueprint(auth)
 
+    with app.app_context():
+        db.create_all()
+
     return app
+
+
+
