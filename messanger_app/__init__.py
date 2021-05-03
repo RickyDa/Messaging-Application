@@ -1,19 +1,29 @@
+import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = '779f42b478a05a759a4028553a2fdae3'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Ricky@localhost:5432/MessagingApp'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-bcrypt = Bcrypt(app)
-db = SQLAlchemy(app)
-login_manager = LoginManager(app)
+bcrypt = Bcrypt()
+db = SQLAlchemy()
+login_manager = LoginManager()
 
-# from message_delete import routes as message_routes
-# from user_delete import routes as user_routes
-from .user import controllers as usr_control
-from .message import controllers as usr_control
+from .user.controllers import auth
+from .message.controllers import main
 
-db.create_all()
+
+def create_app():
+    app = Flask(__name__)
+    app.config['SECRET_KEY'] = '779f42b478a05a759a4028553a2fdae3'
+    app.config[
+        'SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Ricky@localhost:5432/MessagingApp'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+    db.init_app(app)
+
+    login_manager.init_app(app)
+
+    app.register_blueprint(main)
+    app.register_blueprint(auth)
+
+    return app

@@ -10,9 +10,9 @@ def validate_email(email):
     if re.match(regex, email_as_str) is not None:
         match_user = User.query.filter_by(email=email).first()
         if match_user is not None:
-            raise Exception('Email Already Exists!')
+            raise Exception()
     else:
-        raise Exception('Not a Valid Email!')
+        raise Exception()
 
 
 def validate_login_info(username, password):
@@ -27,7 +27,7 @@ def validate_username(username):
     username = str(username)
     match_user = User.query.filter_by(username=username).first()
     if match_user is not None:
-        raise Exception('User Name Already Exists!')
+        raise Exception()
 
 
 def encrypt(password):
@@ -45,4 +45,4 @@ def create_new_user(user):
             return 'Something went wrong please try again', 400
         return user.id, 200
     except Exception as e:
-        return str(e), 400
+        return 'Email or Username are already in use', 400

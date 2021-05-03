@@ -13,7 +13,10 @@ def create_new_message(msg):
     msg = Message.from_json(msg)
 
     msg.subscribers.append(current_user)
-    msg.subscribers.append(receiver)
+
+    if current_user.id != receiver.id:
+        msg.subscribers.append(receiver)
+
     msg = create(msg)
     return msg
 
@@ -34,8 +37,10 @@ def mark_as_read(msg):
 
 
 def read_message(_id):
-    msg = current_user.messages.filter_by(id=_id).first()
-    if msg.read:
+    msg = current_user.messages.filter(Message.id == _id).first()
+    if not msg:
+        return None
+    if msg.read or msg.sender == current_user.username:
         return msg.serialize()
     else:
         return mark_as_read(msg).serialize()
@@ -43,7 +48,10 @@ def read_message(_id):
 
 def delete_message_by_id(_id):
     msg = current_user.messages.filter_by(id=_id).first()
+    if not msg:
+        return False
     msg.subscribers.remove(current_user)
     update()
     if msg.subscribers.count() == 0:
         delete(msg)
+    return True

@@ -1,13 +1,16 @@
-from messanger_app import app
+from messanger_app import create_app
+
+application = create_app()
 
 
-@app.route('/drop')
-def drop():
+@application.route('/drop')
+def drop_create():
     from messanger_app import db
     db.session.rollback()
     db.drop_all()
-    return 'dropped'
+    db.create_all()
+    return 'drop and created'
 
 
 if __name__ == '__main__':
-    app.run(host='localhost', debug=True, port=5000)
+    application.run(host='localhost', debug=True, port=5000)

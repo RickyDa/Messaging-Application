@@ -3,7 +3,8 @@ from flask_login import UserMixin
 
 subscribers = db.Table('subscribers',
                        db.Column('users_id', db.Integer, db.ForeignKey("users.id", ondelete="CASCADE")),
-                       db.Column('message_id', db.Integer, db.ForeignKey("messages.id", ondelete="CASCADE")))
+                       db.Column('message_id', db.Integer, db.ForeignKey("messages.id", ondelete="CASCADE"))
+                       , schema='public')
 
 
 @login_manager.user_loader
@@ -55,7 +56,7 @@ class Message(db.Model):
 
     def serialize(self):
         return {
-            'id': self.id,
+            'message_id': self.id,
             'sender': self.sender,
             'subject': self.subject,
             'body': self.body,
